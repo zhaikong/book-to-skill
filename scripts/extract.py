@@ -552,9 +552,14 @@ def detect_structure(text: str) -> dict:
     )
     chapters_found = [l.strip() for l in lines if chapter_pattern.match(l)]
 
-    # Look for ToC indicators
-    toc_keywords = ["table of contents", "contents", "índice", "sumário"]
-    has_toc = any(kw in text[:5000].lower() for kw in toc_keywords)
+    # Look for ToC indicators in the first ~30k chars (front matter is often well past 5k:
+    # copyright pages, praise, dedications, forewords). Require the keyword to appear on
+    # its own line to avoid false positives like "the contents of this book are...".
+    toc_pattern = re.compile(
+        r"^\s*(?:table of contents|contents|índice|sumário)\s*$",
+        re.IGNORECASE | re.MULTILINE,
+    )
+    has_toc = bool(toc_pattern.search(text[:30000]))
 
     return {
         "chapters_detected": len(chapters_found),
@@ -800,6 +805,11 @@ def main():
     print(f"   Tokens  : ~{tokens // 1000}K")
     print(f"   Chapters: {structure['chapters_detected']} detected")
     print(f"   ToC     : {'yes' if structure['has_toc'] else 'not detected'}")
+    if not structure["has_toc"]:
+        print(
+            "   WARN    : No table of contents detected — chapter mapping in Step 3 "
+            "will rely on heading scan only, which may miss or duplicate sections."
+        )
     print(f"\n   Text -> {OUTPUT_TEXT}")
     print(f"   Meta -> {OUTPUT_META}")
 

@@ -1,12 +1,12 @@
 <h1 align="center">📚 book-to-skill</h1>
 
 <p align="center">
-  <strong>Turn any technical book (PDF or EPUB) into a Claude Code skill — ready to study, reference, and use while you work.</strong>
+  <strong>Turn any technical book or document into a Claude Code skill — ready to study, reference, and use while you work.</strong>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-Skill-blueviolet?style=for-the-badge" alt="Claude Code Skill">
-  <img src="https://img.shields.io/badge/PDF%20%2B%20EPUB-supported-green?style=for-the-badge" alt="PDF + EPUB">
+  <img src="https://img.shields.io/badge/PDF%20%E2%80%A2%20EPUB%20%E2%80%A2%20DOCX%20%E2%80%A2%20MD%20%E2%80%A2%20HTML%20%E2%80%A2%20RTF%20%E2%80%A2%20MOBI-supported-green?style=for-the-badge" alt="Formats supported">
   <img src="https://img.shields.io/badge/effort-high-orange?style=for-the-badge" alt="Effort: high">
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License">
 </p>
@@ -57,8 +57,10 @@ Running `/book-to-skill your-book.pdf` (or `.epub`) creates a full skill at `~/.
 ## 🚀 Usage
 
 ```
-/book-to-skill <path-to-pdf-or-epub> [skill-name-slug]
+/book-to-skill <path-to-document> [skill-name-slug]
 ```
+
+Supported document formats: PDF, EPUB, DOCX, TXT, Markdown, reStructuredText, AsciiDoc, HTML, RTF, MOBI/AZW/AZW3.
 
 **Examples:**
 
@@ -86,9 +88,9 @@ After the skill is created, use it like any other Claude Code skill:
 
 ## 🔧 Requirements
 
-At least one extraction tool must be installed.
+The extractor tries tools in order per format and uses the first available. If nothing is installed, it tells you which command to run. Plain text, Markdown, reStructuredText and AsciiDoc need no extra deps.
 
-**For PDF — choose by book type:**
+**PDF — choose by book type:**
 
 | Book type | Tool | Install | Speed |
 |-----------|------|---------|-------|
@@ -99,14 +101,22 @@ At least one extraction tool must be installed.
 
 > Before extraction begins, the skill asks you whether the book is **technical** or **text-heavy** and picks the right tool automatically. Docling preserves markdown tables and code blocks; pdftotext is faster for prose-only books.
 
-**For EPUB:**
+**EPUB:**
 
 | Tool | Install | Quality |
 |------|---------|---------|
 | `ebooklib` + `beautifulsoup4` | `pip3 install ebooklib beautifulsoup4` | ⭐⭐⭐ Best |
 | stdlib `zipfile` | built-in — no install needed | ⭐⭐ Always available |
 
-The extraction script tries tools in order and uses the first available. If nothing is found, it tells you exactly which command to run.
+**Other formats:**
+
+| Format | Tool | Install |
+|--------|------|---------|
+| DOCX | `python-docx` (fallback: stdlib ZIP/XML) | `pip3 install python-docx` |
+| HTML | `beautifulsoup4` (fallback: stdlib `html.parser`) | `pip3 install beautifulsoup4` |
+| RTF | `striprtf` (fallback: regex) | `pip3 install striprtf` |
+| MOBI / AZW / AZW3 | Calibre `ebook-convert` (external app, not pip) | https://calibre-ebook.com/download |
+| TXT / Markdown / reStructuredText / AsciiDoc | built-in | — |
 
 ---
 
